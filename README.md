@@ -151,7 +151,7 @@ Real ATS platforms have bot detection. Add at least **two** of these to your aut
 
 ## C) What to Submit
 
-Submit your completed project as a **zip file** or a **private GitHub repo**. Include:
+Submit your completed project as a **private GitHub repo**. Include:
 
 1. **All source code** — we should be able to run `npm install && npm start` and see both forms filled successfully
 2. **A short write-up** (add to this README or create `DESIGN.md`) covering:
@@ -159,6 +159,7 @@ Submit your completed project as a **zip file** or a **private GitHub repo**. In
    - What trade-offs you made given the time constraint
    - What was the hardest part
    - What AI tools / assistants you used and how
+3. **Submit your repo link here**: https://forms.gle/ACPi3ajwL8x3VfTE9
 
 ---
 
