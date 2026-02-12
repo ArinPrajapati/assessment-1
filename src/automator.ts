@@ -1,47 +1,55 @@
 import { chromium } from "playwright";
-import { sampleProfile } from "./profile";
-import type { ApplicationResult, UserProfile } from "./types";
-
-/**
- * ============================================================
- * TSENTA TAKE-HOME ASSESSMENT - ATS Form Automator
- * ============================================================
- *
- * Your task: Build an automation system that can fill out job
- * application forms across MULTIPLE ATS platforms using Playwright.
- *
- * There are two mock forms to automate:
- *
- *   1. Acme Corp    → http://localhost:3939/acme.html
- *      Multi-step form with progress bar, typeahead, checkboxes,
- *      radio buttons, conditional fields, file upload
- *
- *   2. Globex Corp  → http://localhost:3939/globex.html
- *      Single-page accordion form with toggle switches, chip
- *      selectors, salary slider, datalist, different selectors
- *
- * Your code should handle BOTH forms with a shared architecture.
- * Read the README for full instructions and evaluation criteria.
- */
+import { sampleProfile } from "./profile.js";
+import type { ApplicationResult, UserProfile } from "./types.js";
+import { BrowserManager } from "./core/BrowserManager.js";
+import { Logger } from "./utils/logger.js";
+import { PlatformRegistry } from "./platforms/PlatformRegistry.js";
+import { AcmeAdapter } from "./platforms/AcmeAdapter.js";
+import { GlobexAdapter } from "./platforms/GlobexAdapter.js";
 
 const BASE_URL = "http://localhost:3939";
+const SCREENSHOT_DIR = "./screenshots";
 
 async function applyToJob(
   url: string,
   profile: UserProfile
 ): Promise<ApplicationResult> {
-  const startTime = Date.now();
+  const logger = new Logger();
+  const browserManager = new BrowserManager(logger, false, "../screenshots/");
 
-  // TODO: Implement your automation here
-  //
-  // Think about:
-  //   - How do you detect which ATS/form you're on?
-  //   - How do you share logic for common field types (text, dropdown, file upload)
-  //     while handling platform-specific differences (typeahead vs datalist,
-  //     checkboxes vs chips, radio buttons vs toggles)?
-  //   - How would a third ATS be added without rewriting everything?
+  const registry = new PlatformRegistry(logger);
+  registry.register('Acme Corp', /\/acme\.html/, AcmeAdapter);
+  registry.register('Globex Corp', /\/globex\.html/, GlobexAdapter);
 
-  throw new Error("Not implemented — this is your task!");
+  let browser = null;
+  let page = null;
+
+  try {
+    browser = await browserManager.launch();
+    page = await browserManager.createPage();
+
+    await page.goto(url, { waitUntil: 'networkidle' });
+    logger.info(`Navigated to: ${url}`);
+
+    const adapter = registry.createAdapter(url, page, profile, SCREENSHOT_DIR);
+    const result = await adapter.run();
+
+    return result;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error(`Application failed: ${errorMessage}`, error instanceof Error ? error : undefined);
+
+    return {
+      success: false,
+      error: errorMessage,
+      durationMs: 0
+    };
+  } finally {
+    if (browser) {
+      await browser.close();
+      logger.debug('Browser closed');
+    }
+  }
 }
 
 // ── Entry point ──────────────────────────────────────────────
