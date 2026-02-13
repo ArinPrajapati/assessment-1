@@ -6,15 +6,29 @@ import { Logger } from "./utils/logger.js";
 import { PlatformRegistry } from "./platforms/PlatformRegistry.js";
 import { AcmeAdapter } from "./platforms/AcmeAdapter.js";
 import { GlobexAdapter } from "./platforms/GlobexAdapter.js";
+import { validateProfile } from "./utils/validation.js";
 
 const BASE_URL = "http://localhost:3939";
 const SCREENSHOT_DIR = "./screenshots";
 
 async function applyToJob(
   url: string,
-  profile: UserProfile
+  profile: UserProfile,
+  logger: Logger
 ): Promise<ApplicationResult> {
-  const logger = new Logger();
+  try {
+    validateProfile(profile);
+    logger.debug('Profile validation passed');
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error(`Profile validation failed: ${errorMessage}`);
+    return {
+      success: false,
+      error: errorMessage,
+      durationMs: 0
+    };
+  }
+
   const browserManager = new BrowserManager(logger, false, "../screenshots/");
 
   const registry = new PlatformRegistry(logger);
@@ -46,14 +60,14 @@ async function applyToJob(
     };
   } finally {
     if (browser) {
-      await browser.close();
-      logger.debug('Browser closed');
+      await browserManager.close();
     }
   }
 }
 
 // ── Entry point ──────────────────────────────────────────────
 async function main() {
+  const logger = new Logger();
   const targets = [
     { name: "Acme Corp", url: `${BASE_URL}/acme.html` },
     { name: "Globex Corporation", url: `${BASE_URL}/globex.html` },
@@ -63,7 +77,7 @@ async function main() {
     console.log(`\n--- Applying to ${target.name} ---`);
 
     try {
-      const result = await applyToJob(target.url, sampleProfile);
+      const result = await applyToJob(target.url, sampleProfile, logger);
 
       if (result.success) {
         console.log(`  Application submitted!`);
@@ -76,6 +90,8 @@ async function main() {
       console.error(`  Fatal error:`, err);
     }
   }
+
+  logger.printSummary();
 }
 
 main();

@@ -13,9 +13,9 @@ export class BrowserManager {
   private headless: boolean;
   private screenshotDir: string;
 
-  constructor(logger: Logger, header: boolean, screenshotDir: string) {
+  constructor(logger: Logger, headless: boolean, screenshotDir: string) {
     this.logger = logger;
-    this.headless = header;
+    this.headless = headless;
     this.screenshotDir = screenshotDir;
 
     // Ensure screenshot directory exists

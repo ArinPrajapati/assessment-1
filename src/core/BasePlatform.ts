@@ -170,57 +170,56 @@ export abstract class BasePlatform {
       waitForSpinner?: string;
     }
   ): Promise<void> {
-    await this.retryWithBackoff(async () => {
-      await this.click(inputSelector);
-      await this.humanBehavior.randomDelay();
-      const timeout = options?.timeout || 15000;
+    await this.click(inputSelector);
+    await this.humanBehavior.randomDelay();
+    const timeout = options?.timeout || 15000;
 
-      const searchTerm = targetValue.substring(0, Math.min(3, targetValue.length));
-      await this.type(inputSelector, searchTerm, { clearFirst: true });
+    const searchTerm = targetValue.substring(0, Math.min(3, targetValue.length));
+    await this.type(inputSelector, searchTerm, { clearFirst: true });
 
-      await this.page.waitForSelector(dropdownSelector, {
-        state: 'visible',
-        timeout: timeout
-      });
+    await this.page.waitForSelector(dropdownSelector, {
+      state: 'visible',
+      timeout: timeout
+    });
 
-      if (options?.waitForSpinner) {
-        try {
-          await this.page.waitForSelector(options.waitForSpinner, { state: 'hidden', timeout: timeout });
-        } catch {
-          // Spinner not found or already hidden
-        }
+    if (options?.waitForSpinner) {
+      try {
+        await this.page.waitForSelector(options.waitForSpinner, { state: 'hidden', timeout: timeout });
+      } catch {
+        // Spinner not found or already hidden
       }
+    }
 
-      await this.humanBehavior.randomDelay();
+    await this.humanBehavior.randomDelay();
 
-      const domOptions = await this.page.$$eval(
-        `${dropdownSelector} [role="option"], ${dropdownSelector} li, ${dropdownSelector} .option`,
-        (elements) => elements.map(el => ({
-          value: (el as HTMLElement).dataset.value || el.textContent?.trim() || '',
-          text: el.textContent?.trim() || '',
-          disabled: (el as HTMLElement).getAttribute('aria-disabled') === 'true'
-        }))
-      );
+    const domOptions = await this.page.$$eval(
+      `${dropdownSelector} [role="option"], ${dropdownSelector} li, ${dropdownSelector} .option`,
+      (elements) => elements.map(el => ({
+        value: (el as HTMLElement).dataset.value || el.textContent?.trim() || '',
+        text: el.textContent?.trim() || '',
+        disabled: (el as HTMLElement).getAttribute('aria-disabled') === 'true'
+      }))
+    );
 
-      const matchableOptions: MatchableOption[] = domOptions.map(opt => ({
-        value: opt.value,
-        text: opt.text,
-        disabled: opt.disabled
-      }));
+    const matchableOptions: MatchableOption[] = domOptions.map(opt => ({
+      value: opt.value,
+      text: opt.text,
+      disabled: opt.disabled
+    }));
 
-      const matchedValue = findBestMatch(targetValue, matchableOptions);
+    const matchedValue = findBestMatch(targetValue, matchableOptions);
 
-      if (!matchedValue) {
-        throw new Error(`No match found for "${targetValue}" in typeahead ${inputSelector}`);
-      }
+    if (!matchedValue) {
+      const available = matchableOptions.map(o => o.text).join(', ');
+      throw new Error(`No match found for "${targetValue}" in typeahead ${inputSelector}. Available: ${available}`);
+    }
 
-      const matchedOption = matchableOptions.find(o => o.value === matchedValue);
-      const optionText = matchedOption?.text || matchedValue;
-      const optionSelector = `${dropdownSelector} [role="option"]:has-text("${optionText}"), ${dropdownSelector} li:has-text("${optionText}")`;
-      await this.click(optionSelector);
+    const matchedOption = matchableOptions.find(o => o.value === matchedValue);
+    const optionText = matchedOption?.text || matchedValue;
+    const optionSelector = `${dropdownSelector} [role="option"]:has-text("${optionText}"), ${dropdownSelector} li:has-text("${optionText}")`;
+    await this.click(optionSelector);
 
-      this.logger.debug(`Selected typeahead ${inputSelector}: ${targetValue} -> ${matchedValue}`);
-    }, `selectSmart ${inputSelector}`);
+    this.logger.debug(`Selected typeahead ${inputSelector}: ${targetValue} -> ${matchedValue}`);
   }
 
   protected async uploadFile(selector: string, filePath: string): Promise<void> {
@@ -245,17 +244,16 @@ export abstract class BasePlatform {
     options?: { required?: boolean }
   ): Promise<void> {
     await this.retryWithBackoff(async () => {
-      // Extract all checkboxes/radios in the container
+      // Extract ALL checkboxes/radios in the container
       const domOptions = await this.page.$$eval(
-        `${containerSelector} input[type="checkbox"][value="${targetValue}"], ${containerSelector} input[type="radio"][value="${targetValue}"]`,
+        `${containerSelector} input[type="checkbox"], ${containerSelector} input[type="radio"]`,
         (elements) => elements.map(el => {
           const input = el as HTMLInputElement;
           const label = input.labels?.[0]?.textContent?.trim() || '';
           return {
             value: input.value,
             text: label || input.value,
-            disabled: input.disabled,
-            selector: `input[value="${input.value}"]`
+            disabled: input.disabled
           };
         })
       );
@@ -269,7 +267,8 @@ export abstract class BasePlatform {
       const matchedValue = findBestMatch(targetValue, matchableOptions);
 
       if (!matchedValue) {
-        throw new Error(`No match found for "${targetValue}" in ${containerSelector}`);
+        const available = matchableOptions.map(o => `${o.value} (${o.text})`).join(', ');
+        throw new Error(`No match found for "${targetValue}" in ${containerSelector}. Available: ${available}`);
       }
 
       const inputSelector = `${containerSelector} input[value="${matchedValue}"]`;

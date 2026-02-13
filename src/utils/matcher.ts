@@ -10,16 +10,16 @@ export function findBestMatch(
   options: MatchableOption[]
 ): string | null {
   const enabledOptions = options.filter(opt => !opt.disabled);
-  const threshold = [0.2, 0.4, 0.6];
+  const thresholds = [0.2, 0.4, 0.6];
 
   if (enabledOptions.length === 0) {
     return null;
   }
 
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < thresholds.length; i++) {
     const fuse = new Fuse(enabledOptions, {
       keys: ['value', 'text'],
-      threshold: threshold[i],
+      threshold: thresholds[i],
       includeScore: true,
       ignoreLocation: true,
     });
@@ -27,9 +27,12 @@ export function findBestMatch(
     const results = fuse.search(targetValue);
 
     if (results.length > 0 && results[0].item) {
+      if (thresholds[i] > 0.4) {
+        console.warn(`[WARN] Weak fuzzy match: "${targetValue}" → "${results[0].item.text}" (threshold: ${thresholds[i]}, score: ${results[0].score?.toFixed(2)})`);
+      }
       return results[0].item.value;
     }
   }
 
-  return enabledOptions[0]?.value || null;
+  return null;
 }

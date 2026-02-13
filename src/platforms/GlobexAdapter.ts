@@ -50,7 +50,9 @@ export class GlobexAdapter extends BasePlatform {
     await this.type('#g-lname', this.profile.lastName);
     await this.type('#g-email', this.profile.email, { fieldType: 'email' });
     await this.type('#g-phone', this.profile.phone, { fieldType: 'phone' });
-    await this.type('#g-city', this.profile.location);
+    
+    const city = this.extractCity(this.profile.location);
+    await this.type('#g-city', city);
 
     if (this.profile.linkedIn) {
       await this.type('#g-linkedin', this.profile.linkedIn);
@@ -59,6 +61,11 @@ export class GlobexAdapter extends BasePlatform {
     if (this.profile.portfolio) {
       await this.type('#g-website', this.profile.portfolio);
     }
+  }
+
+  private extractCity(location: string): string {
+    const parts = location.split(',');
+    return parts[0].trim();
   }
 
   private async fillEducationSection(): Promise<void> {
@@ -108,6 +115,9 @@ export class GlobexAdapter extends BasePlatform {
 
   private async fillAdditionalInfoSection(): Promise<void> {
     this.logger.info('Section: Additional Information (cover letter)');
+
+    // Ensure section is expanded (may already be expanded from previous section)
+    await this.expandSection('Additional Information');
 
     await this.type('#g-motivation', this.profile.coverLetter);
 
@@ -187,8 +197,29 @@ export class GlobexAdapter extends BasePlatform {
       
       const clampedSalary = Math.max(min, Math.min(max, salary));
       
-      await slider.fill(clampedSalary.toString());
-      await this.humanBehavior.randomDelay();
+      await this.humanBehavior.hoverBeforeClick(slider);
+      
+      const box = await slider.boundingBox();
+      if (box) {
+        const percentage = (clampedSalary - min) / (max - min);
+        const targetX = box.x + (box.width * percentage);
+        const targetY = box.y + (box.height / 2);
+        
+        const steps = 5 + Math.floor(Math.random() * 3);
+        await this.page.mouse.move(box.x, targetY);
+        await this.page.mouse.down();
+        
+        for (let i = 1; i <= steps; i++) {
+          const currentX = box.x + ((targetX - box.x) * (i / steps));
+          await this.page.mouse.move(currentX, targetY);
+          await this.humanBehavior.randomDelay(20, 50); 
+        }
+        
+        await this.page.mouse.up();
+        await this.humanBehavior.randomDelay();
+      } else {
+        await slider.fill(clampedSalary.toString());
+      }
 
       this.logger.debug(`Set salary slider: ${clampedSalary}`);
     }, 'setSalarySlider');
