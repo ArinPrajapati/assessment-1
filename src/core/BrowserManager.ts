@@ -4,7 +4,6 @@
 
 import { Browser, chromium, Page } from 'playwright';
 import { Logger } from '../utils/logger';
-import * as path from 'path';
 import * as fs from 'fs';
 
 export class BrowserManager {
@@ -53,17 +52,6 @@ export class BrowserManager {
     return page;
   }
 
-  async screenshot(page: Page, name: string, platformName: string): Promise<string> {
-    const timestamp = Date.now();
-    const filename = `${platformName}-${name}-${timestamp}.png`;
-    const filepath = path.join(this.screenshotDir, filename);
-
-    await page.screenshot({ path: filepath, fullPage: false });
-    this.logger.debug(`Screenshot saved: ${filename}`);
-
-    return filepath;
-  }
-
   async close(): Promise<void> {
     if (this.browser) {
       await this.browser.close();
@@ -74,6 +62,7 @@ export class BrowserManager {
     }
   }
 
+  // for debugging if needed in future 
   getBrowser(): Browser {
     if (!this.browser) {
       throw new Error('Browser not launched');

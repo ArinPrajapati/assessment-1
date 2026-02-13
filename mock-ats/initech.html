@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Initech Corp - Software Engineer Application</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* Initech-specific: Tabbed Layout */
+      .tab-nav {
+        display: flex;
+        background: white;
+        border-bottom: 2px solid #e5e5e5;
+        padding: 0 32px;
+      }
+
+      .tab-btn {
+        padding: 14px 24px;
+        border: none;
+        background: none;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        color: #999;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+        transition: all 0.2s;
+      }
+
+      .tab-btn:hover {
+        color: #1a1a2e;
+      }
+
+      .tab-btn.active {
+        color: #1a1a2e;
+        border-bottom-color: #1a1a2e;
+      }
+
+      .tab-btn.completed {
+        color: #34c759;
+      }
+
+      .tab-btn.completed::before {
+        content: "✓ ";
+      }
+
+      .tab-panel {
+        display: none;
+        padding: 32px;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .tab-panel.active {
+        display: block;
+      }
+
+      .initech-header {
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="ats-header initech-header">
+        <div class="logo">Initech Corp</div>
+        <div class="job-title-header">Software Engineer — Full Stack</div>
+      </header>
+
+      <main class="form-wrapper">
+        <div class="tab-nav">
+          <button
+            class="tab-btn active"
+            data-tab="profile"
+            onclick="switchTab('profile')"
+          >
+            Profile
+          </button>
+          <button
+            class="tab-btn"
+            data-tab="qualifications"
+            onclick="switchTab('qualifications')"
+          >
+            Qualifications
+          </button>
+          <button
+            class="tab-btn"
+            data-tab="preferences"
+            onclick="switchTab('preferences')"
+          >
+            Preferences
+          </button>
+        </div>
+
+        <form id="initech-form">
+          <!-- Tab 1: Profile -->
+          <div class="tab-panel active" data-tab="profile">
+            <h2>Your Profile</h2>
+
+            <div class="form-group">
+              <label for="i-fname"
+                >First Name <span class="required">*</span></label
+              >
+              <input
+                type="text"
+                id="i-fname"
+                name="firstName"
+                required
+                placeholder="First name"
+              />
+              <span class="error-message" data-for="i-fname"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="i-lname"
+                >Last Name <span class="required">*</span></label
+              >
+              <input
+                type="text"
+                id="i-lname"
+                name="lastName"
+                required
+                placeholder="Last name"
+              />
+              <span class="error-message" data-for="i-lname"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="i-email">Email <span class="required">*</span></label>
+              <input
+                type="email"
+                id="i-email"
+                name="email"
+                required
+                placeholder="you@example.com"
+              />
+              <span class="error-message" data-for="i-email"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="i-phone">Phone <span class="required">*</span></label>
+              <input
+                type="tel"
+                id="i-phone"
+                name="phone"
+                required
+                placeholder="+1 (555) 000-0000"
+              />
+              <span class="error-message" data-for="i-phone"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="i-location"
+                >Location <span class="required">*</span></label
+              >
+              <input
+                type="text"
+                id="i-location"
+                name="location"
+                required
+                placeholder="City, State"
+              />
+              <span class="error-message" data-for="i-location"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="i-linkedin">LinkedIn Profile</label>
+              <input
+                type="url"
+                id="i-linkedin"
+                name="linkedin"
+                placeholder="https://linkedin.com/in/you"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="i-portfolio">Portfolio / GitHub</label>
+              <input
+                type="url"
+                id="i-portfolio"
+                name="portfolio"
+                placeholder="https://github.com/you"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="i-resume"
+                >Resume <span class="required">*</span></label
+              >
+              <div class="file-upload-area" id="i-resume-area">
+                <input
+                  type="file"
+                  id="i-resume"
+                  name="resume"
+                  accept=".pdf,.doc,.docx"
+                  required
+                />
+                <div class="file-upload-label">
+                  <span class="upload-icon">&#128206;</span>
+                  <span
+                    >Drop your resume or <strong>click to browse</strong></span
+                  >
+                  <span class="file-types">PDF, DOC, DOCX (max 5MB)</span>
+                </div>
+                <div class="file-name" id="i-resume-name"></div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-primary"
+                onclick="nextTab('profile')"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+
+          <!-- Tab 2: Qualifications -->
+          <div class="tab-panel" data-tab="qualifications">
+            <h2>Qualifications</h2>
+
+            <div class="form-group">
+              <label for="i-experience"
+                >Years of Experience <span class="required">*</span></label
+              >
+              <select id="i-experience" name="experienceLevel" required>
+                <option value="" disabled selected>Select level</option>
+                <option value="0-1">0-1 years (Entry Level)</option>
+                <option value="1-3">1-3 years</option>
+                <option value="3-5">3-5 years</option>
+                <option value="5-10">5-10 years</option>
+                <option value="10+">10+ years (Senior)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="i-education"
+                >Education Level <span class="required">*</span></label
+              >
+              <select id="i-education" name="education" required>
+                <option value="" disabled selected>Select education</option>
+                <option value="high-school">High School Diploma</option>
+                <option value="associates">Associate's Degree</option>
+                <option value="bachelors">Bachelor's Degree</option>
+                <option value="masters">Master's Degree</option>
+                <option value="phd">Doctorate / PhD</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="i-school"
+                >University / School <span class="required">*</span></label
+              >
+              <div class="typeahead-container">
+                <input
+                  type="text"
+                  id="i-school"
+                  name="school"
+                  required
+                  placeholder="Start typing..."
+                  autocomplete="off"
+                />
+                <div
+                  class="i-spinner"
+                  id="i-school-spinner"
+                  style="display: none"
+                >
+                  Searching...
+                </div>
+                <ul class="typeahead-dropdown" id="i-school-results"></ul>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Technical Skills <span class="required">*</span></label>
+              <div class="checkbox-group" id="i-skills-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" name="skills" value="javascript" />
+                  JavaScript
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="skills" value="typescript" />
+                  TypeScript
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="skills" value="python" /> Python
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="skills" value="react" /> React
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="skills" value="nodejs" /> Node.js
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="skills" value="sql" /> SQL
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="skills" value="git" /> Git
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="skills" value="docker" /> Docker
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="skills" value="aws" /> AWS
+                </label>
+              </div>
+              <span class="error-message" data-for="skills"></span>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="prevTab('qualifications')"
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                onclick="nextTab('qualifications')"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+
+          <!-- Tab 3: Preferences -->
+          <div class="tab-panel" data-tab="preferences">
+            <h2>Work Preferences</h2>
+
+            <div class="form-group">
+              <label
+                >Authorized to work in the US?
+                <span class="required">*</span></label
+              >
+              <div class="radio-group">
+                <label class="radio-label">
+                  <input type="radio" name="workAuth" value="yes" required />
+                  Yes
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="workAuth" value="no" /> No
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group" id="i-visa-group" style="display: none">
+              <label>Will you need visa sponsorship?</label>
+              <div class="radio-group">
+                <label class="radio-label">
+                  <input type="radio" name="visaSponsorship" value="yes" /> Yes
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="visaSponsorship" value="no" /> No
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="i-start-date"
+                >Earliest Start Date <span class="required">*</span></label
+              >
+              <input type="date" id="i-start-date" name="startDate" required />
+            </div>
+
+            <div class="form-group">
+              <label for="i-salary"
+                >Expected Salary Range <span class="required">*</span></label
+              >
+              <select id="i-salary" name="salaryRange" required>
+                <option value="" disabled selected>Select range</option>
+                <option value="50-70k">$50,000 - $70,000</option>
+                <option value="70-90k">$70,000 - $90,000</option>
+                <option value="90-110k">$90,000 - $110,000</option>
+                <option value="110-130k">$110,000 - $130,000</option>
+                <option value="130-150k">$130,000 - $150,000</option>
+                <option value="150k+">$150,000+</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="i-referral"
+                >How did you find us? <span class="required">*</span></label
+              >
+              <select id="i-referral" name="referral" required>
+                <option value="" disabled selected>Select one</option>
+                <option value="linkedin">LinkedIn</option>
+                <option value="company-website">Company Website</option>
+                <option value="job-board">Job Board</option>
+                <option value="referral">Employee Referral</option>
+                <option value="university">University / Career Fair</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="i-cover-letter"
+                >Why Initech? <span class="required">*</span></label
+              >
+              <textarea
+                id="i-cover-letter"
+                name="coverLetter"
+                required
+                rows="5"
+                placeholder="What excites you about joining Initech?"
+                maxlength="2000"
+              ></textarea>
+              <div class="char-count">
+                <span id="i-letter-count">0</span> / 2000
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label consent-label">
+                <input type="checkbox" id="i-consent" name="consent" required />
+                I certify all information is accurate and consent to processing.
+                <span class="required">*</span>
+              </label>
+              <span class="error-message" data-for="i-consent"></span>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="prevTab('preferences')"
+              >
+                Back
+              </button>
+              <button type="submit" class="btn btn-submit" id="i-submit-btn">
+                Submit Application
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Success Page -->
+        <section
+          class="success-page"
+          id="initech-success"
+          style="display: none"
+        >
+          <div class="success-content">
+            <div class="success-icon">&#10003;</div>
+            <h2>Application Received!</h2>
+            <p>
+              Thank you for applying to
+              <strong>Software Engineer — Full Stack</strong> at
+              <strong>Initech Corp</strong>.
+            </p>
+            <p>
+              Our team will review your application within 3-5 business days.
+            </p>
+            <p class="confirmation-id">
+              Reference: <span id="initech-ref"></span>
+            </p>
+          </div>
+        </section>
+      </main>
+
+      <footer class="ats-footer">
+        <p>Powered by MockATS &mdash; Tsenta Take-Home Assessment</p>
+      </footer>
+    </div>
+
+    <script>
+      const SCHOOLS = [
+        "Massachusetts Institute of Technology",
+        "Stanford University",
+        "University of California, Berkeley",
+        "Carnegie Mellon University",
+        "Georgia Institute of Technology",
+        "University of Michigan",
+        "University of Texas at Austin",
+        "University of Illinois Urbana-Champaign",
+        "Indian Institute of Technology Delhi",
+        "Indian Institute of Technology Bombay",
+        "Indian Institute of Technology Madras",
+        "BITS Pilani",
+        "Delhi Technological University",
+        "University of Washington",
+        "Purdue University",
+        "Cornell University",
+        "Columbia University",
+        "Harvard University",
+        "Princeton University",
+        "Yale University",
+        "California Institute of Technology",
+        "University of California, Los Angeles",
+      ];
+
+      const TAB_ORDER = ["profile", "qualifications", "preferences"];
+      let currentTab = "profile";
+
+      // ----- Tab navigation -----
+      function switchTab(tabName) {
+        const currentIdx = TAB_ORDER.indexOf(currentTab);
+        const targetIdx = TAB_ORDER.indexOf(tabName);
+
+        // Can only go forward if current tab validates
+        if (targetIdx > currentIdx) {
+          for (let i = currentIdx; i < targetIdx; i++) {
+            if (!validateTab(TAB_ORDER[i])) return;
+          }
+        }
+
+        currentTab = tabName;
+        updateTabs();
+      }
+
+      function nextTab(fromTab) {
+        if (!validateTab(fromTab)) return;
+
+        const idx = TAB_ORDER.indexOf(fromTab);
+        if (idx < TAB_ORDER.length - 1) {
+          // Mark completed
+          document
+            .querySelector(`.tab-btn[data-tab="${fromTab}"]`)
+            .classList.add("completed");
+          currentTab = TAB_ORDER[idx + 1];
+          updateTabs();
+        }
+      }
+
+      function prevTab(fromTab) {
+        const idx = TAB_ORDER.indexOf(fromTab);
+        if (idx > 0) {
+          currentTab = TAB_ORDER[idx - 1];
+          updateTabs();
+        }
+      }
+
+      function updateTabs() {
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-panel")
+          .forEach((p) => p.classList.remove("active"));
+
+        document
+          .querySelector(`.tab-btn[data-tab="${currentTab}"]`)
+          .classList.add("active");
+        document
+          .querySelector(`.tab-panel[data-tab="${currentTab}"]`)
+          .classList.add("active");
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      // ----- Validation -----
+      function validateTab(tabName) {
+        let valid = true;
+        const panel = document.querySelector(
+          `.tab-panel[data-tab="${tabName}"]`,
+        );
+
+        // Clear previous errors
+        panel
+          .querySelectorAll(".error-message")
+          .forEach((el) => (el.textContent = ""));
+        panel
+          .querySelectorAll(".form-group")
+          .forEach((el) => el.classList.remove("has-error"));
+
+        // Required text/email/tel/url/date inputs
+        panel
+          .querySelectorAll(
+            "input[required]:not([type='checkbox']):not([type='radio']):not([type='file'])",
+          )
+          .forEach((input) => {
+            if (!input.value.trim()) {
+              showError(input, "This field is required");
+              valid = false;
+            } else if (
+              input.type === "email" &&
+              !input.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
+            ) {
+              showError(input, "Enter a valid email");
+              valid = false;
+            }
+          });
+
+        // Required selects
+        panel.querySelectorAll("select[required]").forEach((sel) => {
+          if (!sel.value) {
+            showError(sel, "Please select an option");
+            valid = false;
+          }
+        });
+
+        // Required textareas
+        panel.querySelectorAll("textarea[required]").forEach((ta) => {
+          if (!ta.value.trim()) {
+            showError(ta, "This field is required");
+            valid = false;
+          }
+        });
+
+        // Skills (at least one)
+        if (tabName === "qualifications") {
+          const checked = panel.querySelectorAll(
+            'input[name="skills"]:checked',
+          );
+          if (checked.length === 0) {
+            const errEl = panel.querySelector('[data-for="skills"]');
+            if (errEl) errEl.textContent = "Select at least one skill";
+            valid = false;
+          }
+        }
+
+        // Work auth radio
+        if (tabName === "preferences") {
+          const workAuth = document.querySelector(
+            'input[name="workAuth"]:checked',
+          );
+          if (!workAuth) {
+            const rg = document
+              .querySelector('input[name="workAuth"]')
+              .closest(".form-group");
+            rg.classList.add("has-error");
+            valid = false;
+          }
+
+          // Consent checkbox
+          const consent = document.getElementById("i-consent");
+          if (!consent.checked) {
+            const errEl = panel.querySelector('[data-for="i-consent"]');
+            if (errEl) errEl.textContent = "You must agree to continue";
+            valid = false;
+          }
+        }
+
+        // File upload
+        if (tabName === "profile") {
+          const resume = document.getElementById("i-resume");
+          if (!resume.files || resume.files.length === 0) {
+            showError(resume, "Please upload your resume");
+            valid = false;
+          }
+        }
+
+        return valid;
+      }
+
+      function showError(input, message) {
+        const group = input.closest(".form-group");
+        group.classList.add("has-error");
+        const errEl = group.querySelector(".error-message");
+        if (errEl) errEl.textContent = message;
+      }
+
+      // ----- Typeahead (async with simulated delay) -----
+      const schoolInput = document.getElementById("i-school");
+      const schoolResults = document.getElementById("i-school-results");
+      const schoolSpinner = document.getElementById("i-school-spinner");
+      let searchTimeout = null;
+
+      schoolInput.addEventListener("input", function () {
+        const query = this.value.toLowerCase().trim();
+        schoolResults.innerHTML = "";
+
+        if (query.length < 2) {
+          schoolResults.style.display = "none";
+          schoolSpinner.style.display = "none";
+          return;
+        }
+
+        // Show spinner, simulate async search
+        schoolSpinner.style.display = "block";
+
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(
+          () => {
+            const matches = SCHOOLS.filter((s) =>
+              s.toLowerCase().includes(query),
+            );
+            schoolSpinner.style.display = "none";
+
+            if (matches.length === 0) {
+              schoolResults.style.display = "none";
+              return;
+            }
+
+            matches.slice(0, 5).forEach((match) => {
+              const li = document.createElement("li");
+              li.textContent = match;
+              li.setAttribute("role", "option");
+              li.addEventListener("click", function () {
+                schoolInput.value = match;
+                schoolResults.style.display = "none";
+                schoolInput.dispatchEvent(new Event("change"));
+              });
+              schoolResults.appendChild(li);
+            });
+            schoolResults.style.display = "block";
+          },
+          300 + Math.random() * 500,
+        );
+      });
+
+      document.addEventListener("click", function (e) {
+        if (
+          !schoolInput.contains(e.target) &&
+          !schoolResults.contains(e.target)
+        ) {
+          schoolResults.style.display = "none";
+        }
+      });
+
+      // ----- Conditional fields -----
+      document.querySelectorAll('input[name="workAuth"]').forEach((radio) => {
+        radio.addEventListener("change", function () {
+          document.getElementById("i-visa-group").style.display =
+            this.value === "yes" ? "block" : "none";
+        });
+      });
+
+      // ----- Resume filename -----
+      document
+        .getElementById("i-resume")
+        .addEventListener("change", function () {
+          const name = this.files[0] ? this.files[0].name : "";
+          document.getElementById("i-resume-name").textContent = name;
+          if (name)
+            document.getElementById("i-resume-area").classList.add("has-file");
+        });
+
+      // ----- Character count -----
+      document
+        .getElementById("i-cover-letter")
+        .addEventListener("input", function () {
+          document.getElementById("i-letter-count").textContent =
+            this.value.length;
+        });
+
+      // ----- Submission -----
+      document
+        .getElementById("initech-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          if (!validateTab("preferences")) return;
+
+          const btn = document.getElementById("i-submit-btn");
+          btn.disabled = true;
+          btn.textContent = "Submitting...";
+
+          setTimeout(() => {
+            const refId =
+              "INT-" +
+              Date.now().toString(36).toUpperCase() +
+              "-" +
+              Math.random().toString(36).substring(2, 6).toUpperCase();
+            document.getElementById("initech-ref").textContent = refId;
+
+            document.querySelector(".tab-nav").style.display = "none";
+            document.getElementById("initech-form").style.display = "none";
+            document.getElementById("initech-success").style.display = "block";
+          }, 1500);
+        });
+    </script>
+  </body>
+</html>

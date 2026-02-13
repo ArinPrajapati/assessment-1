@@ -1,4 +1,3 @@
-import { chromium } from "playwright";
 import { sampleProfile } from "./profile.js";
 import type { ApplicationResult, UserProfile } from "./types.js";
 import { BrowserManager } from "./core/BrowserManager.js";
@@ -6,6 +5,7 @@ import { Logger } from "./utils/logger.js";
 import { PlatformRegistry } from "./platforms/PlatformRegistry.js";
 import { AcmeAdapter } from "./platforms/AcmeAdapter.js";
 import { GlobexAdapter } from "./platforms/GlobexAdapter.js";
+import { InitechAdapter } from "./platforms/InitechAdapter.js";
 import { validateProfile } from "./utils/validation.js";
 
 const BASE_URL = "http://localhost:3939";
@@ -34,6 +34,7 @@ async function applyToJob(
   const registry = new PlatformRegistry(logger);
   registry.register('Acme Corp', /\/acme\.html/, AcmeAdapter);
   registry.register('Globex Corp', /\/globex\.html/, GlobexAdapter);
+  registry.register('Initech Corp', /\/initech\.html/, InitechAdapter);
 
   let browser = null;
   let page = null;
@@ -71,6 +72,7 @@ async function main() {
   const targets = [
     { name: "Acme Corp", url: `${BASE_URL}/acme.html` },
     { name: "Globex Corporation", url: `${BASE_URL}/globex.html` },
+    { name: "Initech Corp", url: `${BASE_URL}/initech.html` },
   ];
 
   for (const target of targets) {
