@@ -2,10 +2,10 @@
 
 ## Demo
 
-https://github.com/user-attachments/assets/demo_video.mp4
 
-> The video above shows the automation filling all 3 forms (Acme, Globex, Initech) end-to-end.
+https://github.com/user-attachments/assets/d2fbab05-d35a-4bb5-b19b-8974e109758b
 
+The video above shows the automation filling all 3 forms (Acme, Globex, Initech) end-to-end.
 ## Overview
 
 This document describes the implementation and trade-offs made in building this application. The system successfully fills out three mock ATS (Applicant Tracking System) forms—Acme Corp (4-step wizard), Globex Corp (accordion layout), and Initech Corp (tabbed form) using a single candidate profile, with human-like behavior to avoid bot detection.
